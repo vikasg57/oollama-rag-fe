@@ -4,10 +4,10 @@ const Footer = () => {
   return (
     <footer className="app-footer">
       <div className="footer-content">
-        <p>© {new Date().getFullYear()} UPSC Agent - AI-powered MCQ Generation for UPSC Preparation</p>
+      <p>© {new Date().getFullYear()} CIVISYNC - AI-powered UPSC Preparation</p>
       </div>
     </footer>
   );
 };
 
-export default Footer; 
+export default Footer;
