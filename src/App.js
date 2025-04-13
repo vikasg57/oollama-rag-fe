@@ -42,23 +42,45 @@ function App() {
     setError(null);
   };
 
-  const handleGenerateContent = async (query, indexName, type = "MCQ") => {
-    if (!indexName) {
-      setError("Please provide an index name");
-      return;
-    }
+  const handleGenerateContent = async (query, indexName = activeIndex, type = contentType) => {
+    console.log("handleGenerateContent triggered with:", { query, indexName, type });
     
+    // Direct DOM verification as backup
+    if (!query || query.trim() === "") {
+      const directInputValue = document.getElementById('query-input')?.value;
+      console.log("Direct DOM input value:", directInputValue);
+      
+      if (directInputValue && directInputValue.trim() !== "") {
+        query = directInputValue.trim();
+        console.log("Using direct DOM input value instead:", query);
+      } else {
+        setError("Please enter a query before submitting.");
+        return;
+      }
+    }
+
     setIsLoading(true);
     setError(null);
-    
+    setResultContent(null);
+
+    const apiUrl = `https://oollama-rag.onrender.com/75605149-f19c-434c-b2cc-15ab6991e8e3/query-ollama/?query=${encodeURIComponent(query)}&index_name=${encodeURIComponent(indexName || 'default')}&content_type=${encodeURIComponent(type)}`;
+    console.log("API URL:", apiUrl);
+
     try {
-      const response = await fetch(`https://oollama-rag.onrender.com/75605149-f19c-434c-b2cc-15ab6991e8e3/query/?query=${encodeURIComponent(query)}&index_name=${encodeURIComponent(indexName)}&content_type=${encodeURIComponent(type)}`);
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || `Failed to generate ${type}`);
-      }
+      console.log("Making API call with query:", query);
+      const response = await fetch(apiUrl);
       
+      if (!response.ok) {
+        console.error("API error status:", response.status);
+        const errorText = await response.text();
+        console.error("API error response:", errorText);
+        throw new Error(`API error: ${response.status} - ${errorText || response.statusText}`);
+      }
+
+      console.log("API call successful, parsing response...");
       const data = await response.json();
+      console.log("API response data:", data);
+      
       setResultContent(data.response);
       
       // On mobile, always collapse left panel and force scroll to results
@@ -84,8 +106,9 @@ function App() {
           }, 100);
         }, 300);
       }
-    } catch (err) {
-      setError(err.message);
+    } catch (error) {
+      console.error("Error in handleGenerateContent:", error);
+      setError(`Error generating content: ${error.message}`);
     } finally {
       setIsLoading(false);
     }

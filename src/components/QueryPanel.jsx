@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import ResourceSelector from "./ResourceSelector";
 
 const QueryPanel = ({ 
@@ -13,6 +13,8 @@ const QueryPanel = ({
   const [query, setQuery] = useState("Generate 5 UPSC-style MCQs");
   const [manualIndexName, setManualIndexName] = useState("");
   const [showResourceSelector, setShowResourceSelector] = useState(false);
+  const queryInputRef = useRef(null);
+  const prevContentTypeRef = useRef(contentType);
   
   // Predefined queries based on content type
   const predefinedQueries = {
@@ -41,14 +43,63 @@ const QueryPanel = ({
 
   // Update query when content type changes
   useEffect(() => {
-    setQuery(predefinedQueries[contentType][0]);
-  }, [contentType, predefinedQueries]);
+    // Only run this effect when content type actually changes
+    if (prevContentTypeRef.current !== contentType) {
+      // Check if the current query is one of the predefined queries for any content type
+      const allPredefinedQueries = [
+        ...predefinedQueries.MCQ, 
+        ...predefinedQueries.NOTES, 
+        ...predefinedQueries.ESSAY
+      ];
+      
+      // If the current query is a predefined one or empty, reset to default for new content type
+      const isCurrentQueryPredefined = allPredefinedQueries.includes(query) || query.trim() === '';
+      
+      if (isCurrentQueryPredefined) {
+        setQuery(predefinedQueries[contentType][0]);
+      }
+      // If it's a custom query (not in any predefined list), keep it
+      
+      // Update the ref to the new content type
+      prevContentTypeRef.current = contentType;
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [contentType, predefinedQueries]); // Removed 'query' from dependencies to prevent re-runs when query changes
+  
+  // Effect to synchronize the input value with state
+  useEffect(() => {
+    if (queryInputRef.current) {
+      queryInputRef.current.value = query;
+    }
+  }, [query]);
+  
+  const handleQueryChange = (e) => {
+    const newValue = e.target.value;
+    console.log("Query changed:", newValue);
+    try {
+      setQuery(newValue);
+      // Force update the input value directly as a backup mechanism
+      if (queryInputRef.current) {
+        queryInputRef.current.value = newValue;
+      }
+    } catch (error) {
+      console.error("Error setting query:", error);
+    }
+  };
   
   const handleSubmit = (e) => {
     e.preventDefault();
+    
+    // Get the value directly from the DOM as a backup
+    let submittedQuery = query;
+    if (queryInputRef.current) {
+      submittedQuery = queryInputRef.current.value;
+    }
+    
+    console.log("Form submitted with query:", submittedQuery);
     const indexToUse = activeIndex || manualIndexName;
     if (indexToUse) {
-      onGenerateContent(query, indexToUse, contentType);
+      onGenerateContent(submittedQuery, indexToUse, contentType);
     }
   };
   
@@ -57,7 +108,13 @@ const QueryPanel = ({
   };
   
   const selectPredefinedQuery = (predefinedQuery) => {
+    console.log("Selected predefined query:", predefinedQuery);
     setQuery(predefinedQuery);
+    
+    // Set the value directly in the textarea as a backup
+    if (queryInputRef.current) {
+      queryInputRef.current.value = predefinedQuery;
+    }
   };
   
   const handleSelectExistingIndex = (indexName) => {
@@ -104,11 +161,13 @@ const QueryPanel = ({
           <label htmlFor="query-input">Query:</label>
           <textarea
             id="query-input"
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
+            ref={queryInputRef}
+            defaultValue={query}
+            onChange={handleQueryChange}
             placeholder="Enter your query here"
             rows={3}
             disabled={isLoading}
+            style={{ width: '100%' }}
           />
           <div className="query-templates">
             <p className="templates-heading">Suggested templates:</p>

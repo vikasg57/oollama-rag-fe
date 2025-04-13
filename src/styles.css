@@ -1266,4 +1266,50 @@ pre code {
 /* Fix for code blocks inside lists */
 .result-content li pre {
   margin: 0.5em 0;
+}
+
+/* Enhanced Textarea Styling - Complete Reset and Rebuild */
+#query-input {
+  width: 100% !important; /* Force width at 100% */
+  min-height: 100px !important;
+  resize: vertical !important;
+  font-family: inherit !important;
+  font-size: 16px !important;
+  line-height: 1.5 !important;
+  padding: 12px !important;
+  margin: 5px 0 !important;
+  border: 2px solid var(--primary-color) !important;
+  border-radius: 8px !important;
+  box-shadow: none !important;
+  background-color: white !important;
+  color: #333 !important;
+  display: block !important;
+  box-sizing: border-box !important;
+  -webkit-appearance: none !important;
+  -moz-appearance: none !important;
+  appearance: none !important;
+  z-index: 100 !important;
+  position: relative !important;
+  transition: all 0.3s ease !important;
+}
+
+#query-input:focus {
+  outline: none !important;
+  border-color: var(--primary-light) !important;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.3) !important;
+}
+
+#query-input:disabled {
+  background-color: #f3f4f6 !important;
+  cursor: not-allowed !important;
+  opacity: 0.7 !important;
+}
+
+/* Hide previous styles */
+.input-group textarea {
+  /* Reset to default values */
+  border: none;
+  padding: 0;
+  margin: 0;
+  background: transparent;
 } 
