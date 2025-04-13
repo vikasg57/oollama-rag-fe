@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
 import ReactMarkdown from "react-markdown";
+import remarkGfm from 'remark-gfm'; // For tables, strikethrough, etc.
 
 const ResultDisplay = ({ content, isLoading, error, contentType = "MCQ" }) => {
   const [copied, setCopied] = useState(false);
@@ -17,18 +18,17 @@ const ResultDisplay = ({ content, isLoading, error, contentType = "MCQ" }) => {
   const processMarkdown = (content) => {
     if (!content) return "";
     
-    // First, escape content within triple backtick blocks to preserve them
     let processedContent = content;
     
-    // Handle markdown codeblocks with language specification
-    processedContent = processedContent.replace(/```([\w-]*)\n([\s\S]*?)```/g, (match, language, code) => {
-      // For markdown specific code blocks, we want to preserve the content but remove the ```markdown wrapper
-      if (language.toLowerCase() === 'markdown') {
-        return code;
-      }
-      // For other language code blocks, format them as proper code blocks
-      return `\n\n<pre><code class="language-${language || 'text'}">${code}</code></pre>\n\n`;
+    // First pass: Handle specific markdown codeblocks that should be directly rendered
+    processedContent = processedContent.replace(/```(markdown|md)\n([\s\S]*?)```/g, (match, language, code) => {
+      // For markdown-specific code blocks, we want to preserve the content but remove the ```markdown wrapper
+      return code;
     });
+    
+    // Second pass: Process the content for special formatting if needed
+    // For example, ensure proper spacing for list items
+    processedContent = processedContent.replace(/(\n[*-]\s.*\n)(?!\s*[*-])/g, '$1\n');
     
     return processedContent;
   };
@@ -110,7 +110,7 @@ const ResultDisplay = ({ content, isLoading, error, contentType = "MCQ" }) => {
             className="result-content" 
             ref={contentRef}
           >
-            <ReactMarkdown>{processMarkdown(content)}</ReactMarkdown>
+            <ReactMarkdown remarkPlugins={[remarkGfm]}>{processMarkdown(content)}</ReactMarkdown>
           </div>
           {contentOverflow && (
             <div className="scroll-top-container">

@@ -1215,4 +1215,55 @@ pre code {
 .result-content th {
   background-color: #f3f4f6;
   font-weight: 600;
+}
+
+/* Enhanced list styling for markdown */
+.result-content ul li,
+.result-content ol li {
+  margin-bottom: 0.5em;
+}
+
+.result-content ul ul,
+.result-content ol ol,
+.result-content ul ol,
+.result-content ol ul {
+  margin-top: 0.5em;
+  margin-bottom: 0.5em;
+}
+
+/* Styling for nested lists */
+.result-content ul ul,
+.result-content ol ol,
+.result-content ul ol,
+.result-content ol ul {
+  margin-left: 1em;
+}
+
+/* Special styling for MCQ format */
+.result-content ol li {
+  padding-left: 0.5em;
+}
+
+/* MCQ options styling */
+.result-content li p {
+  margin-bottom: 0.3em;
+}
+
+/* Emphasis for answers and explanations */
+.result-content h3 + p strong,
+.result-content h4 + p strong {
+  color: var(--primary-color);
+}
+
+/* Make horizontal rules more visible */
+.result-content hr {
+  height: 1px;
+  background-color: var(--border-color);
+  border: none;
+  margin: 2em 0;
+}
+
+/* Fix for code blocks inside lists */
+.result-content li pre {
+  margin: 0.5em 0;
 } 

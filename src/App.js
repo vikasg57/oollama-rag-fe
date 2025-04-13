@@ -52,7 +52,7 @@ function App() {
     setError(null);
     
     try {
-      const response = await fetch(`http://127.0.0.1:8000/75605149-f19c-434c-b2cc-15ab6991e8e3/query/?query=${encodeURIComponent(query)}&index_name=${encodeURIComponent(indexName)}&content_type=${encodeURIComponent(type)}`);
+      const response = await fetch(`https://oollama-rag.onrender.com/75605149-f19c-434c-b2cc-15ab6991e8e3/query/?query=${encodeURIComponent(query)}&index_name=${encodeURIComponent(indexName)}&content_type=${encodeURIComponent(type)}`);
       if (!response.ok) {
         const errorData = await response.json();
         throw new Error(errorData.error || `Failed to generate ${type}`);
