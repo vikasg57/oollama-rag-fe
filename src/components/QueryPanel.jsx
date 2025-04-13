@@ -42,7 +42,7 @@ const QueryPanel = ({
   // Update query when content type changes
   useEffect(() => {
     setQuery(predefinedQueries[contentType][0]);
-  }, [contentType]);
+  }, [contentType, predefinedQueries]);
   
   const handleSubmit = (e) => {
     e.preventDefault();
