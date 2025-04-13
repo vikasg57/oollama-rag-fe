@@ -1071,4 +1071,148 @@ body {
     opacity: 1;
     transform: translateY(0);
   }
+}
+
+/* Content Type Selector Styles */
+.content-type-selector {
+  margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.content-type-heading {
+  font-size: 0.9rem;
+  margin-bottom: 0.5rem;
+  color: var(--text-color);
+  font-weight: 500;
+}
+
+.content-type-buttons {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.content-type-button {
+  padding: 0.5rem 1rem;
+  background-color: #f3f4f6;
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  color: var(--light-text);
+}
+
+.content-type-button:hover {
+  background-color: #e5e7eb;
+  border-color: #d1d5db;
+}
+
+.content-type-button.active {
+  background-color: var(--primary-color);
+  color: white;
+  border-color: var(--primary-color);
+}
+
+.content-type-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Code Block Styling */
+pre {
+  background-color: #f5f5f5;
+  border: 1px solid #e0e0e0;
+  border-radius: var(--border-radius);
+  padding: 1rem;
+  margin: 1rem 0;
+  overflow-x: auto;
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+
+code {
+  font-family: 'Courier New', Courier, monospace;
+  background-color: #f5f5f5;
+  padding: 0.2rem 0.4rem;
+  border-radius: 3px;
+  font-size: 0.9rem;
+  color: #333;
+}
+
+pre code {
+  padding: 0;
+  background-color: transparent;
+}
+
+/* Specific styling for markdown content */
+.result-content h1, .result-content h2, .result-content h3, 
+.result-content h4, .result-content h5, .result-content h6 {
+  margin-top: 1.5em;
+  margin-bottom: 0.75em;
+  font-weight: 600;
+}
+
+.result-content h1 {
+  font-size: 1.8rem;
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 0.3em;
+}
+
+.result-content h2 {
+  font-size: 1.5rem;
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 0.3em;
+}
+
+.result-content h3 {
+  font-size: 1.3rem;
+}
+
+.result-content h4 {
+  font-size: 1.1rem;
+}
+
+.result-content ul, .result-content ol {
+  margin-left: 1.5em;
+  margin-bottom: 1em;
+  padding-left: 1em;
+}
+
+.result-content li {
+  margin-bottom: 0.5em;
+}
+
+.result-content p {
+  margin-bottom: 1em;
+  line-height: 1.6;
+}
+
+.result-content blockquote {
+  margin-left: 0;
+  padding-left: 1em;
+  border-left: 4px solid var(--primary-light);
+  color: var(--light-text);
+}
+
+/* For table styling in markdown */
+.result-content table {
+  border-collapse: collapse;
+  width: 100%;
+  margin-bottom: 1em;
+  overflow-x: auto;
+  display: block;
+}
+
+.result-content th,
+.result-content td {
+  border: 1px solid var(--border-color);
+  padding: 0.5em 0.75em;
+  text-align: left;
+}
+
+.result-content th {
+  background-color: #f3f4f6;
+  font-weight: 600;
 } 

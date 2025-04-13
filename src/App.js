@@ -16,6 +16,7 @@ function App() {
   const [error, setError] = useState(null);
   const [isLeftPanelCollapsed, setIsLeftPanelCollapsed] = useState(false);
   const [isMobileView, setIsMobileView] = useState(false);
+  const [contentType, setContentType] = useState("MCQ"); // Default content type is MCQ
 
   // Check if we're in mobile view on component mount and window resize
   useEffect(() => {
@@ -41,7 +42,7 @@ function App() {
     setError(null);
   };
 
-  const handleGenerateMCQs = async (query, indexName) => {
+  const handleGenerateContent = async (query, indexName, type = "MCQ") => {
     if (!indexName) {
       setError("Please provide an index name");
       return;
@@ -51,10 +52,10 @@ function App() {
     setError(null);
     
     try {
-      const response = await fetch(`https://oollama-rag.onrender.com/75605149-f19c-434c-b2cc-15ab6991e8e3/query/?query=${encodeURIComponent(query)}&index_name=${encodeURIComponent(indexName)}`);
+      const response = await fetch(`http://127.0.0.1:8000/75605149-f19c-434c-b2cc-15ab6991e8e3/query/?query=${encodeURIComponent(query)}&index_name=${encodeURIComponent(indexName)}&content_type=${encodeURIComponent(type)}`);
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.error || "Failed to generate MCQs");
+        throw new Error(errorData.error || `Failed to generate ${type}`);
       }
       
       const data = await response.json();
@@ -144,9 +145,11 @@ function App() {
                 <QueryPanel 
                   activeIndex={activeIndex}
                   uploadedIndex={uploadedIndex}
-                  onGenerateMCQs={handleGenerateMCQs}
+                  onGenerateContent={handleGenerateContent}
                   isLoading={isLoading}
                   setActiveIndex={setActiveIndex}
+                  contentType={contentType}
+                  setContentType={setContentType}
                 />
               </div>
             </div>
@@ -178,6 +181,7 @@ function App() {
               content={resultContent} 
               isLoading={isLoading}
               error={error}
+              contentType={contentType}
             />
           </div>
         </div>

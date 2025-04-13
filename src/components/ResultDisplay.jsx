@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import ReactMarkdown from "react-markdown";
 
-const ResultDisplay = ({ content, isLoading, error }) => {
+const ResultDisplay = ({ content, isLoading, error, contentType = "MCQ" }) => {
   const [copied, setCopied] = useState(false);
   const [contentOverflow, setContentOverflow] = useState(false);
   const contentRef = useRef(null);
@@ -12,6 +12,26 @@ const ResultDisplay = ({ content, isLoading, error }) => {
       setContentOverflow(scrollHeight > clientHeight);
     }
   }, [content]);
+
+  // Process markdown content to properly handle code blocks with triple backticks
+  const processMarkdown = (content) => {
+    if (!content) return "";
+    
+    // First, escape content within triple backtick blocks to preserve them
+    let processedContent = content;
+    
+    // Handle markdown codeblocks with language specification
+    processedContent = processedContent.replace(/```([\w-]*)\n([\s\S]*?)```/g, (match, language, code) => {
+      // For markdown specific code blocks, we want to preserve the content but remove the ```markdown wrapper
+      if (language.toLowerCase() === 'markdown') {
+        return code;
+      }
+      // For other language code blocks, format them as proper code blocks
+      return `\n\n<pre><code class="language-${language || 'text'}">${code}</code></pre>\n\n`;
+    });
+    
+    return processedContent;
+  };
   
   const copyToClipboard = () => {
     navigator.clipboard.writeText(content).then(
@@ -31,12 +51,37 @@ const ResultDisplay = ({ content, isLoading, error }) => {
     }
   };
   
+  // Content type specific messages
+  const loadingMessages = {
+    MCQ: "Generating high-quality UPSC questions...",
+    NOTES: "Creating comprehensive UPSC notes...",
+    ESSAY: "Crafting a well-structured UPSC essay..."
+  };
+  
+  const emptyStateMessages = {
+    MCQ: {
+      title: "No MCQs generated yet",
+      description: "Upload a document or specify an index name, then generate MCQs to see results here",
+      steps: ["Upload a PDF or specify an existing index", "Enter your query or select a template", "Click \"Generate MCQs\" to see results"]
+    },
+    NOTES: {
+      title: "No notes generated yet",
+      description: "Upload a document or specify an index name, then generate notes to see results here",
+      steps: ["Upload a PDF or specify an existing index", "Enter your query or select a template", "Click \"Generate Notes\" to see results"]
+    },
+    ESSAY: {
+      title: "No essay generated yet",
+      description: "Upload a document or specify an index name, then generate an essay to see results here",
+      steps: ["Upload a PDF or specify an existing index", "Enter your query or select a template", "Click \"Generate Essay\" to see results"]
+    }
+  };
+  
   return (
     <div className="result-container">
       {isLoading && (
         <div className="loading-animation">
           <div className="spinner"></div>
-          <p>Generating high-quality UPSC questions...</p>
+          <p>{loadingMessages[contentType]}</p>
         </div>
       )}
       
@@ -65,7 +110,7 @@ const ResultDisplay = ({ content, isLoading, error }) => {
             className="result-content" 
             ref={contentRef}
           >
-            <ReactMarkdown>{content}</ReactMarkdown>
+            <ReactMarkdown>{processMarkdown(content)}</ReactMarkdown>
           </div>
           {contentOverflow && (
             <div className="scroll-top-container">
@@ -84,23 +129,17 @@ const ResultDisplay = ({ content, isLoading, error }) => {
       {!isLoading && !error && !content && (
         <div className="empty-state">
           <div className="empty-state-icon">📋</div>
-          <h3 className="empty-state-title">No content generated yet</h3>
+          <h3 className="empty-state-title">{emptyStateMessages[contentType].title}</h3>
           <p className="empty-state-description">
-            Upload a document or specify an index name, then generate MCQs to see results here
+            {emptyStateMessages[contentType].description}
           </p>
           <div className="empty-state-steps">
-            <div className="step">
-              <div className="step-number">1</div>
-              <div className="step-text">Upload a PDF or specify an existing index</div>
-            </div>
-            <div className="step">
-              <div className="step-number">2</div>
-              <div className="step-text">Enter your query or select a template</div>
-            </div>
-            <div className="step">
-              <div className="step-number">3</div>
-              <div className="step-text">Click "Generate MCQs" to see results</div>
-            </div>
+            {emptyStateMessages[contentType].steps.map((step, index) => (
+              <div className="step" key={index}>
+                <div className="step-number">{index + 1}</div>
+                <div className="step-text">{step}</div>
+              </div>
+            ))}
           </div>
         </div>
       )}
